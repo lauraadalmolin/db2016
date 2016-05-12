@@ -228,7 +228,7 @@ INSERT INTO inscricao (inscricaonumero, partcodigo, eventocodigo, data) VALUES (
 INSERT INTO inscricao (inscricaonumero, partcodigo, eventocodigo, data) VALUES (8, 3, 2, '2016-05-02');
 INSERT INTO inscricao (inscricaonumero, partcodigo, eventocodigo, data) VALUES (9, 2, 1, '2016-05-02');
 INSERT INTO inscricao (inscricaonumero, partcodigo, eventocodigo, data) VALUES (10, 3, 1, '2016-05-02');
-
+INSERT INTO inscricao (inscricaonumero, partcodigo, eventocodigo, data) VALUES (11, 3, null, '2016-05-02');
 
 --
 -- TOC entry 1991 (class 0 OID 0)
@@ -322,10 +322,37 @@ SELECT PAL.TITULO, COUNT(FRE.PALESTRACODIGO)
 FROM PALESTRAS AS PAL INNER JOIN FREQUENCIA AS FRE ON (FRE.PALESTRACODIGO = PAL.PALESTRACODIGO)
 GROUP BY PAL.TITULO
 HAVING COUNT(FRE.PALESTRACODIGO) > 1
+-- Exercício 7 
+-- Escreva um comando SQL que liste o nome dos participantes que não estão inscritos em nenhum evento
+SELECT PAR.NOME 
+FROM PARTICIPANTE AS PAR LEFT OUTER JOIN INSCRICAO AS INS ON (PAR.PARTCODIGO = INS.PARTCODIGO)
+-- WHERE INS.PARTCODIGO IS NULL
+GROUP BY PAR.NOME
+HAVING COUNT(INS.INSCRICAONUMERO) = 0;
 
+-- Exercício 8
+-- Escreve um comando de SQL que liste o nome dos participantes em ordem alfabética que se inscreveram nos 
+-- eventos mas não assistiram nenhuma palestra
+SELECT PAR.NOME
+FROM INSCRICAO AS INS INNER JOIN PARTICIPANTE AS PAR ON (PAR.PARTCODIGO = INS.PARTCODIGO)
+ LEFT OUTER JOIN FREQUENCIA AS FRE ON (INS.INSCRICAONUMERO = FRE.INSCRICAONUMERO)
+GROUP BY PAR.NOME
+HAVING COUNT(FRE.PALESTRACODIGO) = 0
+ORDER BY PAR.NOME
 
+-- Exercício 9
+-- Escreva um comando SQL que liste a descrição dos eventos e a quantidade de inscritos em cada um.
+-- O evento deve ser listado mesmo que não haja nenhum inscrito. O resultado deve ser organizado por
+-- quantidade de inscritos em ordem descendente.
+SELECT EVE.DESCRICAO, COUNT(INS.INSCRICAONUMERO)
+FROM EVENTO AS EVE LEFT OUTER JOIN INSCRICAO AS INS ON (EVE.EVENTOCODIGO = INS.EVENTOCODIGO)
+GROUP BY EVE.DESCRICAO ORDER BY COUNT(INS.INSCRICAONUMERO) DESC
 
-
+-- Exercício 10
+-- Escreva um comando SQL que liste a quantidade de eventos cadastrados e a média do valor de
+-- inscrição
+SELECT COUNT(EVENTOCODIGO), AVG(VALORINSCRICAO) 
+FROM EVENTO
 
 
 
